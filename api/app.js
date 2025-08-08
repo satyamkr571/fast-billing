@@ -1,19 +1,18 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const authRoutes = require("./routes/auth");
+import express from "express";
+import pkg from "body-parser";
+const { json } = pkg;
+import authRoutes from "./routes/auth.js";
+import { connect } from "mongoose";
 
 const app = express();
-app.use(bodyParser.json());
+app.use(json());
 
 app.use("/auth", authRoutes);
 
-const mongoose = require("mongoose");
-
-mongoose
-  .connect("your-mongodb-uri", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+connect("your-mongodb-uri", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 

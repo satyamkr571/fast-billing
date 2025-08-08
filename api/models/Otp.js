@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+// models/Otp.js
+import mongoose from "mongoose";
 
 const otpSchema = new mongoose.Schema({
   mobile: String,
@@ -6,4 +7,8 @@ const otpSchema = new mongoose.Schema({
   expiresAt: Date,
 });
 
-module.exports = mongoose.model("Otp", otpSchema);
+const Otp = mongoose.model("Otp", otpSchema);
+
+export const createOtp = (data) => Otp.create(data);
+export const deleteOtp = (filter) => Otp.deleteMany(filter);
+export const findOneOtp = (filter) => Otp.findOne(filter);
