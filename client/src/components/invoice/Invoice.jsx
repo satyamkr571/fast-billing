@@ -444,7 +444,7 @@ export default function InvoiceGenerator() {
     customerAddress: customers[0].customerAddress,
     customerGSTIN: customers[0].customerGSTIN,
     item: undefined,
-    hsn: "251710",
+    hsn: "25171010",
     qty: "",
     rate: "",
     taxableValue: "0",
