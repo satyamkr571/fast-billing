@@ -37,6 +37,7 @@
   border-radius: 5px;
   font-size: 15px;
   transition: border 0.3s ease;
+  min-width: 240px;
 }
 
 .login-box input:focus {

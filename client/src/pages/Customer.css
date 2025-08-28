@@ -1,0 +1,91 @@
+.customer-manager {
+  display: flex;
+  gap: 30px;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+}
+
+.form-section,
+.list-section {
+  flex: 1;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  color: #333;
+}
+
+h2 {
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  color: #333;
+  font-weight: 600;
+}
+
+.customer-form .form-group {
+  margin-bottom: 15px;
+}
+.customer-form label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #444;
+}
+.customer-form input,
+.customer-form textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+.customer-form textarea {
+  min-height: 60px;
+}
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background: #2782cb;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.submit-btn:hover {
+  background: #1d6ba8;
+}
+
+/* ✅ Scrollable customer list */
+.list-section {
+  overflow: hidden; /* keep structure clean */
+}
+
+.list-section .customer-list {
+  flex: 1; /* take remaining height */
+  overflow-y: auto; /* enable internal scroll */
+  padding-right: 8px; /* space for scrollbar */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+
+/* Custom scrollbar styling (optional) */
+.list-section .customer-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list-section .customer-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
+}
+
+.list-section .customer-list::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}

@@ -1,0 +1,153 @@
+/* General Layout */
+.add-inventory-page {
+  margin: 2rem;
+  border-radius: 16px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Headings */
+.add-inventory-page h2,
+.table-card h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #1f2937;
+}
+
+/* Form Card */
+.form-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  margin-bottom: 2rem;
+}
+
+.inventory-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.3rem;
+}
+
+input {
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 0.95rem;
+  transition: border 0.2s ease;
+}
+
+input:focus {
+  border-color: #2563eb;
+  outline: none;
+}
+
+/* Add / Update Button */
+.add-btn {
+  margin-top: 28px;
+  height: 40px;
+  flex: 1 1;
+  padding: 0.5rem;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.add-btn:hover {
+  background: linear-gradient(90deg, #1d4ed8, #2563eb);
+  transform: translateY(-2px);
+}
+
+/* Table Card */
+.table-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+  min-height: 390px;
+}
+
+/* Table Styles */
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.inventory-table th,
+.inventory-table td {
+  color: #374151;
+  padding: 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.inventory-table th {
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.inventory-table tr:hover td {
+  background-color: #f9fafb;
+}
+
+/* Edit Button */
+.edit-btn {
+  background: #facc15;
+  border: none;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.3s ease;
+  gap: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #eab308;
+}
+
+.table-wrapper {
+  max-height: 300px; /* approx 4 rows visible */
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.inventory-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f3f4f6;
+  z-index: 2;
+  text-align: left;
+  padding: 0.9rem;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.inventory-table td {
+  padding: 0.9rem;
+  border-bottom: 1px solid #e5e7eb;
+}

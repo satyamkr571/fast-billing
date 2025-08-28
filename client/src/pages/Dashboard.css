@@ -1,43 +1,93 @@
+/* Dashboard container */
 .dashboard-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  background-color: #a6c8c8;
-  padding: 20px 40px; /* Top/Bottom 20px, Left/Right 40px */
+  padding: 16px 24px;
+  background: linear-gradient(35deg, #ffffff, #c7dcdb);
+  /* background-color: #a6c8c8; */
   width: 100%;
-  max-width: 1080px; /* Optional: prevent stretching too wide on large screens */
-  margin: 0 auto; /* Center the grid on big screens */
-  height: calc(100vh - 200px);
-}
-
-.dashboard-card {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
   display: flex;
-  color: white;
-  padding: 20px;
-  border-radius: 12px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  height: 200px;
+  flex-direction: column;
   align-items: center;
+  position: relative;
+  top: 70px;
+  height: calc(100vh - 70px);
+}
+
+/* Tabs container */
+.tab-menu {
+  display: flex;
   justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 28px;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+/* Tab button */
+.tab-link {
+  padding: 12px 22px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #374151;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  position: relative;
 }
 
-@media (max-width: 480px) {
-  .dashboard-container {
-    padding: 15px; /* Reduce padding on small screens */
+/* Hover effect */
+.tab-link:hover {
+  background: #3d72e4;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+}
+
+/* Active tab */
+.tab-link.active {
+  background: #2563eb;
+  color: #fff;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
+}
+
+/* Animated underline for active tab */
+.tab-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 45%;
+  height: 3px;
+  background: #1d4ed8;
+  border-radius: 4px;
+}
+
+/* Tab content container */
+.tab-content {
+  display: flex;
+  justify-content: center;
+  background: #fff;
+  border-radius: 18px;
+  animation: fadeIn 0.3s ease-in-out;
+  min-height: 480px;
+  width: 100%;
+  max-width: 1100px;
+  overflow-y: auto;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  height: calc(100vh - 150px);
+}
+
+/* Smooth fade animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
-
-  .dashboard-card {
-    font-size: 16px;
-    padding: 15px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

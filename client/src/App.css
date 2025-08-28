@@ -1,5 +1,5 @@
 .App {
-  background-color: #2b3135;
+  background-color: #a6c8c8;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -9,7 +9,9 @@
 
   width: 100vw;
 }
-* {
+*,
+div {
   padding: 0px;
   margin: 0px;
+  box-sizing: border-box;
 }

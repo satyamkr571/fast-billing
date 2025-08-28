@@ -2,10 +2,16 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #003366;
+  background-color: #2357b1;
+  /* background-color: #a6c8c8; */
+  border-bottom: 4px solid #1d5555;
   color: white;
   padding: 10px 20px;
   width: 100%;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  height: 70px;
 }
 
 .header-left {

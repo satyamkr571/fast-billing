@@ -1,0 +1,132 @@
+.invoice-page {
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  font-family: "Segoe UI", sans-serif;
+  color: black;
+  width: 100%;
+  background: white;
+}
+
+.invoice-page h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.invoice-controls {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.invoice-controls label {
+  font-weight: 600;
+}
+
+.invoice-controls select {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Table container with fixed height */
+.invoice-table-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 490px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Table */
+.invoice-table {
+  border-collapse: collapse;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sticky Header */
+.invoice-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f3f4f6;
+}
+
+.invoice-table thead tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Scrollable Body */
+.invoice-table tbody {
+  flex: 1;
+  display: block;
+  overflow-y: auto;
+}
+
+.invoice-table tbody tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Sticky Footer */
+.invoice-table tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: #f1f5f9;
+  font-weight: bold;
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* Cells */
+.invoice-table th,
+.invoice-table td {
+  border-bottom: 1px solid #ddd;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+.invoice-table th,
+.invoice-table tfoot td {
+  padding: 1rem 0.75rem;
+}
+
+/* Buttons */
+.edit-btn {
+  background: #facc15;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.download-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.edit-btn:hover {
+  background: #eab308;
+  transform: translateY(-2px);
+}
+
+.download-btn:hover {
+  background: #2563eb;
+}
