@@ -1,49 +1,113 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Inventory.css";
 
-export default function Inventory() {
+export default function Inventory({ userInfo }) {
   const [itemName, setItemName] = useState("");
   const [HSN, setHSN] = useState("");
-  const [rate, setrate] = useState("");
-  const [inventory, setInventory] = useState([
-    { itemName: "Stone Boulder (No Size)", rate: 1400, HSN: "25171010" },
-    { itemName: "Stone Boulder - No Size", rate: 1620, HSN: "25171010" },
-    { itemName: "Stone Chip (60MM)", rate: 1100, HSN: "25171010" },
-  ]);
+  const [rate, setRate] = useState("");
+  const [inventory, setInventory] = useState([]);
   const [editingId, setEditingId] = useState(null);
 
-  const handleAddOrUpdate = (e) => {
-    e.preventDefault();
+  const getInventoryList = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/get-all-inventory?userId=${userId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch inventory");
+      }
+
+      const data = await response.json();
+
+      // ✅ Update inventory list state
+      setInventory(data?.items || []);
+    } catch (error) {
+      alert(
+        error.message || "Something went wrong while fetching inventory ❌"
+      );
+    }
+  };
+
+  // Fetch inventory when userId changes
+  useEffect(() => {
+    userInfo?._id && getInventoryList(userInfo?._id);
+  }, [userInfo?._id]);
+
+  const saveOrUpdateInventory = async (userId, inventoryData) => {
+    try {
+      const response = await fetch("http://localhost:8080/api/inventory", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          ...inventoryData, // { itemName, rate, HSN, isDeleted }
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to save inventory item");
+      }
+      const data = await response.json();
+      return data.item;
+    } catch (error) {
+      alert(error.message || "Something went wrong while saving inventory ❌");
+    }
+  };
+
+  const handleAddOrUpdate = async (e) => {
+    e.preventDefault();
+    // ✅ Validation
     if (!itemName || !HSN || !rate) {
-      alert("Please fill all fields!");
+      alert("Please fill all required fields!");
       return;
     }
+    const inventoryData = {
+      itemName,
+      HSN,
+      rate,
+      isDeleted: false,
+      _id: editingId || undefined, // If editing, pass _id to backend
+    };
 
-    if (editingId) {
-      // Update existing item
-      setInventory(
-        inventory.map((item) =>
-          item.id === editingId ? { ...item, itemName, HSN, rate } : item
-        )
+    try {
+      // ✅ Save to backend
+      const savedItem = await saveOrUpdateInventory(
+        userInfo?._id,
+        inventoryData
       );
-      setEditingId(null);
-    } else {
-      // Add new item
-      const newItem = { id: Date.now(), itemName, HSN, rate };
-      setInventory([...inventory, newItem]);
+      if (savedItem) {
+        if (editingId) {
+          // Update item in local state
+          setInventory((prev) =>
+            prev.map((item) => (item._id === editingId ? savedItem : item))
+          );
+          setEditingId(null);
+        } else {
+          // Add new item to local state
+          setInventory((prev) => [...prev, savedItem]);
+        }
+      }
+      // ✅ Reset form fields
+      setItemName("");
+      setHSN("");
+      setRate("");
+    } catch (error) {
+      console.error("Error in handleAddOrUpdate:", error);
+      alert("Failed to save inventory item ❌");
     }
-
-    // Reset fields
-    setItemName("");
-    setHSN("");
-    setrate("");
   };
 
   const handleEdit = (item) => {
     setItemName(item.itemName);
     setHSN(item.HSN);
-    setrate(item.rate);
+    setRate(item.rate);
     setEditingId(item.id);
   };
 
@@ -82,7 +146,7 @@ export default function Inventory() {
               type="number"
               step="0.01"
               value={rate}
-              onChange={(e) => setrate(e.target.value)}
+              onChange={(e) => setRate(e.target.value)}
               placeholder="Enter rate"
               required
             />
@@ -110,7 +174,7 @@ export default function Inventory() {
               </thead>
               <tbody>
                 {inventory.map((item) => (
-                  <tr key={item.id}>
+                  <tr key={item._id}>
                     <td>{item.itemName}</td>
                     <td>{item.HSN}</td>
                     <td>{item.rate}</td>

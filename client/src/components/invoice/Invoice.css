@@ -31,17 +31,13 @@
   font-size: 15px;
   font-weight: 600;
   transition: background 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
 }
 
 .download-btn:hover {
   background: #014272;
   transform: translateY(-2px);
 }
-
-/* .download-link.disabled {
-  pointer-events: none;
-  opacity: 0.6;
-} */
 
 /* Invoice Form Styling */
 

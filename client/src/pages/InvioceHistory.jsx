@@ -1,67 +1,50 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./InvoiceHistory.css";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import InvoicePDF from "../components/invoice/InvoicePDF";
-
-// Dummy Customers
-// const customers = [
-//   {
-//     customerName: "ADITYA MINERAL",
-//     customerAddress:
-//       "JL NO 60, PLOT NO 223,224, SALANPUR, West Bengal - 713359",
-//     customerGSTIN: "19AGIPA4725G1ZK",
-//   },
-//   {
-//     customerName: "Maa Sherawali Refractory",
-//     customerAddress:
-//       "Na, Debipur, Kulti, Paschim Bardhaman,West Bengal - 713369",
-//     customerGSTIN: "19KGWPK3868J1Z5",
-//   },
-//   {
-//     customerName: "Shreeja Roadlines",
-//     customerAddress:
-//       "Majidia Park, Kulti, Paschim Bardhaman,West Bengal - 713343",
-//     customerGSTIN: "19AJDPS2978R1Z2",
-//   },
-//   {
-//     customerName: "Jajoo Rashmi Refractories Limited",
-//     customerAddress:
-//       "Plot No -416, Mouza-maheshpur At Kadavita, Dendua Road, Po Kalyaneshwari, Kadavita, Bardhaman, West Bengal - 713369",
-//     customerGSTIN: "19AAACJ8517G1ZG",
-//   },
-// ];
+import { useNavigate } from "react-router-dom";
+import { formatCurrency, formatDate } from "../utils/utils";
 
 export default function InvoiceHistory({ userInfo }) {
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [sortBy, setSortBy] = useState("invoiceNo"); // invoiceNo | date
-  const [, setEditingInvoice] = useState(null);
-
-  const today = new Date().toISOString().split("T")[0];
-  const dueDate = new Date();
-  dueDate.setDate(dueDate.getDate() + 15);
-  const defaultDueDate = dueDate.toISOString().split("T")[0];
+  const navigate = useNavigate();
 
   // Sample Data (for demo: all current month invoices)
-  const invoicesData = [
-    {
-      invoiceNo: "SGTC0040",
-      date: today,
-      dueDate: defaultDueDate,
-      vehicleNumber: "NL01AD2314",
-      miningChallan: "",
-      customerName: "ADITYA MINERAL",
-      customerAddress:
-        "JL NO 60, PLOT NO 223,224, SALANPUR, West Bengal - 713359",
-      customerGSTIN: "19AGIPA4725G1ZK",
-      item: "Stone Boulder (No Size)",
-      hsn: "25171010",
-      qty: 43.44,
-      rate: 1620,
-    },
-  ];
+  const [invoices, setInvoices] = useState([]);
+
+  // API Call to fetch invoices
+  const getInvoiceList = async (userId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/get-all-invoices?userId=${userId}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to fetch invoices");
+      }
+
+      const data = await response.json();
+      setInvoices(data?.invoices || []); // update state
+    } catch (error) {
+      alert(error.message || "Something went wrong while fetching invoices ❌");
+    }
+  };
+
+  // Fetch invoices when user is available
+  useEffect(() => {
+    if (userInfo?._id) {
+      getInvoiceList(userInfo._id);
+    }
+  }, [userInfo?._id]);
 
   // Filter by month
-  const filteredInvoices = invoicesData.filter(
+  const filteredInvoices = invoices.filter(
     (inv) => new Date(inv.date).getMonth() + 1 === month
   );
 
@@ -79,9 +62,10 @@ export default function InvoiceHistory({ userInfo }) {
     0
   );
 
-  const handleEdit = (invoice) => {
-    setEditingInvoice(invoice);
-    alert(`Editing invoice ${invoice.invoiceNo}`);
+  const handleEdit = (invoiceData) => {
+    navigate("/dashboard/create-invoice", {
+      state: { invoiceData },
+    });
   };
 
   return (
@@ -137,7 +121,7 @@ export default function InvoiceHistory({ userInfo }) {
               sortedInvoices.map((inv) => (
                 <tr key={inv.id}>
                   <td>{inv.invoiceNo}</td>
-                  <td>{inv.date}</td>
+                  <td>{formatDate(inv.date)}</td>
                   <td>{inv.customerName}</td>
                   <td>{inv.qty}</td>
                   <td>{inv.rate}</td>
@@ -170,9 +154,11 @@ export default function InvoiceHistory({ userInfo }) {
                 <td colSpan="3" style={{ fontWeight: "bold" }}>
                   Totals
                 </td>
-                <td style={{ fontWeight: "bold" }}>{totalQty}</td>
+                <td style={{ fontWeight: "bold" }}>{totalQty + " MTS"}</td>
                 <td style={{ fontWeight: "bold" }}>—</td>
-                <td style={{ fontWeight: "bold" }}>{totalPrice}</td>
+                <td style={{ fontWeight: "bold" }}>
+                  {formatCurrency(totalPrice)}
+                </td>
                 <td style={{ fontWeight: "bold" }}>
                   {sortedInvoices.length} Invoices
                 </td>

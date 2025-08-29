@@ -20,7 +20,7 @@ const InvoiceForm = ({ formData, handleChange, itemList, customers }) => (
         <input
           type="date"
           name="date"
-          value={formData.date}
+          value={new Date(formData.date).toISOString().split("T")[0]}
           onChange={handleChange}
         />
       </div>
@@ -30,7 +30,7 @@ const InvoiceForm = ({ formData, handleChange, itemList, customers }) => (
         <input
           type="date"
           name="dueDate"
-          value={formData.dueDate}
+          value={new Date(formData.dueDate).toISOString().split("T")[0]}
           onChange={handleChange}
         />
       </div>
@@ -83,11 +83,14 @@ const InvoiceForm = ({ formData, handleChange, itemList, customers }) => (
 
       <div className="form-group">
         <label>Item Description</label>
-        <select name="item" value={formData.item} onChange={handleChange}>
+        <select
+          name="itemName"
+          value={formData.itemName}
+          onChange={handleChange}>
           <option value="">-- Select an Item --</option>
           {itemList.map((item) => (
-            <option key={item.name} value={item.name}>
-              {item.name}
+            <option key={item.itemName} value={item.itemName}>
+              {item.itemName}
             </option>
           ))}
         </select>

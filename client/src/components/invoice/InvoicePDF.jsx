@@ -221,7 +221,7 @@ const InvoicePDF = ({ data, userInfo }) => {
           <Text>
             {userInfo?.supplierName}, {userInfo?.supplierAddress},
           </Text>
-          <Text>GSTIN: {userInfo?.supplierGSTIN}</Text>
+          <Text>GSTIN: {userInfo?.GSTIn}</Text>
         </View>
 
         {/* Customer */}
@@ -244,7 +244,7 @@ const InvoicePDF = ({ data, userInfo }) => {
             <Text style={styles.tableCell}>Total (₹)</Text>
           </View>
           <View style={styles.tableRow}>
-            <Text style={styles.tableCell}>{data.item}</Text>
+            <Text style={styles.tableCell}>{data.itemName}</Text>
             <Text style={styles.tableCell}>{data.hsn}</Text>
             <Text style={styles.tableCell}>{data.qty}</Text>
             <Text style={styles.tableCell}>{data.rate}</Text>

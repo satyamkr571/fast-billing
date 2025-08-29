@@ -1,65 +1,80 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import "./Invoice.css";
 import InvoiceForm from "./invoiceForm";
 import InvoicePDF from "./InvoicePDF";
-
-// Dummy Customers
-const customers = [
-  {
-    customerName: "ADITYA MINERAL",
-    customerAddress:
-      "JL NO 60, PLOT NO 223,224, SALANPUR, West Bengal - 713359",
-    customerGSTIN: "19AGIPA4725G1ZK",
-  },
-  {
-    customerName: "Maa Sherawali Refractory",
-    customerAddress:
-      "Na, Debipur, Kulti, Paschim Bardhaman,West Bengal - 713369",
-    customerGSTIN: "19KGWPK3868J1Z5",
-  },
-  {
-    customerName: "Shreeja Roadlines",
-    customerAddress:
-      "Majidia Park, Kulti, Paschim Bardhaman,West Bengal - 713343",
-    customerGSTIN: "19AJDPS2978R1Z2",
-  },
-  {
-    customerName: "Jajoo Rashmi Refractories Limited",
-    customerAddress:
-      "Plot No -416, Mouza-maheshpur At Kadavita, Dendua Road, Po Kalyaneshwari, Kadavita, Bardhaman, West Bengal - 713369",
-    customerGSTIN: "19AAACJ8517G1ZG",
-  },
-];
+import { useLocation } from "react-router-dom";
 
 // Main Component
-export default function InvoiceGenerator({ userInfo }) {
+export default function InvoiceGenerator({ userInfo, customers, itemList }) {
   const today = new Date().toISOString().split("T")[0];
   const dueDate = new Date();
   dueDate.setDate(dueDate.getDate() + 15);
   const defaultDueDate = dueDate.toISOString().split("T")[0];
-
+  const location = useLocation();
+  const { invoiceData } = location.state || {};
   const [formErrors, setFormErrors] = useState([]);
-  const [formData, setFormData] = useState({
-    invoiceNo: "SGTC0040",
-    date: today,
-    dueDate: defaultDueDate,
-    vehicleNumber: "",
-    miningChallan: "",
-    customerName: customers[0].customerName,
-    customerAddress: customers[0].customerAddress,
-    customerGSTIN: customers[0].customerGSTIN,
-    item: undefined,
-    hsn: "25171010",
-    qty: "",
-    rate: "",
-  });
 
-  const itemList = [
-    { name: "Stone Boulder (No Size)", rate: 1400 },
-    { name: "Stone Boulder - No Size", rate: 1620 },
-    { name: "Stone Chip (60MM)", rate: 1100 },
-  ];
+  const [formData, setFormData] = useState(
+    invoiceData || {
+      invoiceNo: "",
+      date: today,
+      dueDate: defaultDueDate,
+      vehicleNumber: "",
+      miningChallan: "",
+      customerName: "",
+      customerId: "",
+      customerAddress: "",
+      customerGSTIN: "",
+      itemId: "",
+      itemName: undefined,
+      hsn: "25171010",
+      qty: "",
+      rate: "",
+    }
+  );
+
+  const saveInvoiceHandler = async () => {
+    try {
+      const payload = {
+        userId: userInfo._id, // replace with logged-in user
+        supplierName: userInfo.supplierName,
+
+        // customer & item IDs (from dropdown selections ideally)
+        customerId: formData.customerId,
+        itemId: formData.itemId,
+
+        qty: formData.qty,
+        rate: formData.rate,
+        vehicleNumber: formData.vehicleNumber,
+        miningChallan: formData.miningChallan,
+        dueDate: formData.dueDate,
+        invoiceId: formData._id, // update
+      };
+
+      const res = await fetch("http://localhost:8080/api/invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message);
+        // Update local state with backend response (e.g. invoiceNo)
+        setFormData((prev) => ({
+          ...prev,
+          ...data.invoice,
+        }));
+      } else {
+        alert(data.message || "Failed to save invoice");
+      }
+    } catch (error) {
+      console.error("Save invoice error:", error);
+      alert("Error saving invoice");
+    }
+  };
 
   const validateForm = () => {
     const { vehicleNumber, item, qty, rate } = formData;
@@ -89,12 +104,13 @@ export default function InvoiceGenerator({ userInfo }) {
       const selected = customers.find((c) => c.customerName === value);
       if (selected) {
         updatedForm.customerAddress = selected.customerAddress;
-        updatedForm.customerGSTIN = selected.customerGSTIN;
+        updatedForm.customerGSTIN = selected.gstin;
+        updatedForm.customerId = selected._id;
       }
     }
 
-    if (name === "item") {
-      const selectedItem = itemList.find((item) => item.name === value);
+    if (name === "itemName") {
+      const selectedItem = itemList.find((item) => item.itemName === value);
       if (selectedItem) {
         updatedForm.rate = selectedItem.rate.toString();
         const qty = parseFloat(formData.qty || 0);
@@ -103,11 +119,51 @@ export default function InvoiceGenerator({ userInfo }) {
         const total = (parseFloat(taxable) + parseFloat(gst)).toFixed(2);
         updatedForm.gst = gst;
         updatedForm.totalAmount = total;
+        updatedForm.itemId = selectedItem._id;
       }
     }
 
     setFormData(updatedForm);
   };
+
+  // ✅ Function to generate next invoice number
+  const generateNextInvoiceNo = (lastInvoiceNo) => {
+    const prefix = lastInvoiceNo.slice(0, 3); // e.g. SGTS
+    const serial = parseInt(lastInvoiceNo.slice(4)) + 1; // increment
+
+    return `${prefix}${serial.toString().padStart(4, "0")}`;
+  };
+
+  useEffect(() => {
+    const fetchLastInvoice = async (userId, supplierName) => {
+      try {
+        const query = new URLSearchParams({ userId, supplierName }).toString();
+        const res = await fetch(
+          `http://localhost:8080/api/invoice/last?${query}`
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch last invoice");
+        }
+
+        const data = await res.json();
+        const { lastInvoiceNo } = data;
+
+        const nextInvoiceNo = generateNextInvoiceNo(lastInvoiceNo);
+
+        setFormData((prev) => ({
+          ...prev,
+          invoiceNo: nextInvoiceNo,
+        }));
+      } catch (err) {
+        console.error("Error fetching last invoice:", err);
+      }
+    };
+
+    if ((userInfo._id, userInfo.supplierName, !invoiceData)) {
+      fetchLastInvoice(userInfo._id, userInfo.supplierName);
+    }
+  }, [userInfo._id, userInfo.supplierName, invoiceData]);
 
   return (
     <div className="invoice-generator-container">
@@ -141,7 +197,7 @@ export default function InvoiceGenerator({ userInfo }) {
           document={<InvoicePDF data={formData} userInfo={userInfo} />}
           fileName={formData.invoiceNo + ".pdf"}>
           {({ loading }) => (
-            <button className="download-btn">
+            <button onClick={saveInvoiceHandler} className="download-btn">
               {loading ? "Preparing..." : "Download PDF"}
             </button>
           )}
